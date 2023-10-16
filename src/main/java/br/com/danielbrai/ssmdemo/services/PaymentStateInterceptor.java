@@ -5,6 +5,7 @@ import br.com.danielbrai.ssmdemo.domain.PaymentEvent;
 import br.com.danielbrai.ssmdemo.domain.PaymentState;
 import br.com.danielbrai.ssmdemo.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.state.State;
@@ -18,8 +19,7 @@ import java.util.Optional;
 @Component
 public class PaymentStateInterceptor extends StateMachineInterceptorAdapter<PaymentState, PaymentEvent> {
 
-
-    private PaymentRepository paymentRepository;
+    private final PaymentRepository paymentRepository;
 
     @Override
     public void preStateChange(State<PaymentState, PaymentEvent> state, Message<PaymentEvent> message,
