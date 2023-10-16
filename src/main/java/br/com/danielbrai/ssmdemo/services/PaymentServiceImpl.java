@@ -32,7 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public StateMachine<PaymentState, PaymentEvent> preAuthorize(Long id) {
         StateMachine<PaymentState, PaymentEvent> sm = this.build(id);
-        this.sendEvent(id, sm, PaymentEvent.PRE_AUTH_APPROVED);
+        this.sendEvent(id, sm, PaymentEvent.PRE_AUTHORIZE);
         return sm;
     }
 
