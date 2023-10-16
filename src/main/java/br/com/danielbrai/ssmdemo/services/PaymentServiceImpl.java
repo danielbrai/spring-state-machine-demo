@@ -21,6 +21,7 @@ public class PaymentServiceImpl implements PaymentService {
     public static final String PAYMENT_ID = "payment_id";
     private final PaymentRepository paymentRepository;
     private final StateMachineFactory<PaymentState, PaymentEvent> stateMachineFactory;
+    private final PaymentStateInterceptor paymentStateInterceptor;
 
     @Override
     public Payment newPayment(Payment payment) {
@@ -63,12 +64,15 @@ public class PaymentServiceImpl implements PaymentService {
             StateMachine<PaymentState, PaymentEvent> stateMachine = stateMachineFactory.getStateMachine(Long.toString(payment.getId()));
             stateMachine.stop();
             stateMachine.getStateMachineAccessor().doWithAllRegions(
-                    sma -> sma.resetStateMachine(new DefaultStateMachineContext<>(
-                            payment.getState(),
-                            null,
-                            null,
-                            null)
-                    )
+                    sma -> {
+                        sma.addStateMachineInterceptor(this.paymentStateInterceptor);
+                        sma.resetStateMachine(new DefaultStateMachineContext<>(
+                                payment.getState(),
+                                null,
+                                null,
+                                null)
+                        );
+                    }
             );
             stateMachine.start();
             return stateMachine;
